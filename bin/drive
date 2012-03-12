@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+
+var CLI = require('../lib/cli')
+
+new CLI(process.argv).exec()
