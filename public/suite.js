@@ -77,6 +77,7 @@
   }
 
   proto.add_result = function(test, type, err) {
+    if(err) err.stacktrace = ''+err.stack
     this.results[test.name] = err || {'pass':true}
   }
 
@@ -139,7 +140,7 @@
 
       // non-reentrant.
       var i = 0
-      test.on('end', function() { if(++i < 2) iter(test) })
+      test.on('end', function() { if(++i < 2) setTimeout(function() { iter(test) }, 0) })
       test.go()
     } 
 
@@ -192,9 +193,12 @@
   function suite(name, fn) {
     var test_suite = new TestSuite(name)
       , name = 'test-module-'+(+new Date())
-    fn = Function('test', 'return '+fn)(function derp(name, fn) { return test(test_suite, name, fn) })
-    fn.name = name
+      , timeout
 
+    // fn = Function('test', 'return '+fn)(function derp(name, fn) { return test(test_suite, name, fn) })
+    // fn.name = name
+
+    exports.test = test.bind(null, test_suite)
     define(name, fn)
 
     require([name], function() {
