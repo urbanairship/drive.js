@@ -206,6 +206,73 @@
     })
   }
 
+  function REPL() {
+    this.breakpoint = false
+  }
+
+  REPL.prototype.take = function(ident) {
+    this.callenter = false
+
+    var xhr = new XMLHttpRequest
+    xhr.open('GET', '_repl/?ident='+encodeURIComponent(ident), false)
+    xhr.send(null)
+
+    switch(xhr.responseText) {
+      case 'c':
+      case 'continue':
+        this.breakpoint = false
+        throw {step:true}
+      case 'n':
+        throw {step:true}
+      case 's':
+        this.callenter = true
+        throw {step:true}
+    }
+
+    return xhr.responseText
+  }
+
+  REPL.prototype.send = function(what) {
+    var xhr = new XMLHttpRequest
+
+    xhr.open('POST', '_repl/', false)
+    try {
+      xhr.send(JSON.stringify(what))
+    } catch(err) {
+    }
+  }
+
+  var repl = new REPL
+
+  exports.__repl = function(ident, fn) {
+    if(repl.breakpoint) {
+      while(1) {
+        try {
+          var result = fn(function() { return repl.take(ident) })
+          repl.send(result)
+        } catch(err) {
+          if(err.step)
+            return
+          repl.send(err)
+        }
+      }
+    }
+  } 
+
+  exports.__repl.set_trace = function() {
+    repl.breakpoint = true
+    repl._cached = repl._cached ? repl._cached.concat([repl.breakpoint]) : [repl.breakpoint]
+  }
+
+  exports.__repl.callenter = function() {
+    repl._cached = repl._cached ? repl._cached.concat([repl.breakpoint]) : [repl.breakpoint] 
+    repl.breakpoint = repl.callenter
+  }
+
+  exports.__repl.callexit = function() {
+    repl.breakpoint = repl._cached.pop()
+  }
+
   exports.suite = suite
 })(window)
 
