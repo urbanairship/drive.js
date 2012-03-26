@@ -2,8 +2,14 @@ function driver(url) {
   var xhr = new XMLHttpRequest
 
   xhr.onreadystatechange = function() {
-    if(xhr.readyState == 4) {
-      xhr_continue(JSON.parse(xhr.responseText))
+    if(xhr.readyState == 4) try { 
+      xhr_continue(__JSON__.parse(xhr.responseText))
+    } catch(err) {
+      // attempt to reconnect in a second...
+      console.error(err)
+      setTimeout(function() {
+        driver('/register/')
+      }, 1000) 
     }
   }
   xhr.open('GET', url+"?user_agent=node")

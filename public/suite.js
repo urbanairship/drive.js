@@ -1,16 +1,9 @@
 (function(exports) {
-  function xhr(url, ready) {
-    var xhr = new XMLHttpRequest
-
-    xhr.onreadystatechange = typeof ready === 'function' ? Function() : function() {
-      try {
-        if(xhr.readyState === 4)
-          ready(xhr)
-      } catch(err) {}
-    }
-    xhr.open('GET', url)
-    xhr.send(null)
-    return xhr
+  function bind(fn, to) {
+    var args = [].slice.call(arguments, 2)
+    return function() {
+      return fn.apply(to, args.concat([].slice.call(arguments)))
+    } 
   }
 
   function EE() {
@@ -71,8 +64,8 @@
     this.members[test.name] = test
 
     for(var ev in {'pass':'', 'fail':'', 'error':''}) {
-      test.on(ev, this.push_update.bind(this, this.urls[ev]))
-      test.on(ev, this.add_result.bind(this, test, ev))
+      test.on(ev, bind(this.push_update, this, this.urls[ev]))
+      test.on(ev, bind(this.add_result, this, test, ev))
     }
   }
 
@@ -88,13 +81,13 @@
 
   proto.finish = function() {
     if(this.pending_pushes > 0) {
-      return setTimeout(this.finish.bind(this), 10)
+      return setTimeout(bind(this.finish, this), 10)
     }
 
     var results = JSON.stringify({suite:this.name, data:this.results})
       , xhr = new XMLHttpRequest
 
-    xhr.onreadystatechange = Function('next', 'xhr', 'if(xhr.readyState === 4) next()').bind(null, next, xhr)
+    xhr.onreadystatechange = bind(Function('next', 'xhr', 'if(xhr.readyState === 4) next()'), null, next, xhr)
     xhr.open('POST', this.urls.finish)
     xhr.send(results)
 
@@ -131,7 +124,7 @@
       var member = members.shift()
         , test = self.members[member]
 
-      window.onerror = self.respond_error.bind(self, test)
+      window.onerror = bind(self.respond_error, self, test)
 
       self.timeout = setTimeout(function() {
         test.emit('error', new Error('test timed out'))
@@ -157,7 +150,7 @@
 
   proto.go = function() {
     try {
-      this.fn(this.respond.bind(this))
+      this.fn(bind(this.respond, this))
       return true
     } catch(err) {
       this.emit(err.assertion ? 'fail' : 'error', err)
@@ -198,7 +191,7 @@
     // fn = Function('test', 'return '+fn)(function derp(name, fn) { return test(test_suite, name, fn) })
     // fn.name = name
 
-    exports.test = test.bind(null, test_suite)
+    exports.test = bind(test, null, test_suite)
     define(name, fn)
 
     require([name], function() {
