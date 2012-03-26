@@ -84,7 +84,7 @@
       return setTimeout(bind(this.finish, this), 10)
     }
 
-    var results = JSON.stringify({suite:this.name, data:this.results})
+    var results = __JSON__.stringify({suite:this.name, data:this.results})
       , xhr = new XMLHttpRequest
 
     xhr.onreadystatechange = bind(Function('next', 'xhr', 'if(xhr.readyState === 4) next()'), null, next, xhr)
@@ -93,7 +93,7 @@
 
     function next() {
       // from driver.js
-      xhr_continue(JSON.parse(xhr.responseText))
+      xhr_continue(__JSON__.parse(xhr.responseText))
     }
   }
 
@@ -188,9 +188,6 @@
       , name = 'test-module-'+(+new Date())
       , timeout
 
-    // fn = Function('test', 'return '+fn)(function derp(name, fn) { return test(test_suite, name, fn) })
-    // fn.name = name
-
     exports.test = bind(test, null, test_suite)
     define(name, fn)
 
@@ -230,7 +227,7 @@
 
     xhr.open('POST', '_repl/', false)
     try {
-      xhr.send(JSON.stringify(what))
+      xhr.send(__JSON__.stringify(what))
     } catch(err) {
     }
   }
