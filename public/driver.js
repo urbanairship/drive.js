@@ -6,7 +6,6 @@ function driver(url) {
       xhr_continue(__JSON__.parse(xhr.responseText))
     } catch(err) {
       // attempt to reconnect in a second...
-      console.error(err)
       setTimeout(function() {
         driver('/register/')
       }, 1000) 
