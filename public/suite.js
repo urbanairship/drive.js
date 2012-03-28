@@ -1,4 +1,25 @@
 (function(exports) {
+  var console = window.console || {}
+  
+  function log(original) {
+    return function() {
+      var args = [].slice.call(arguments)
+        , xhr = new XMLHttpRequest
+
+      try {
+        ;(original || Function()).apply(console, args)
+        xhr.open('POST', '_log/', false)
+        xhr.send(__JSON__.stringify(args))
+      } catch(err) {
+      }
+    }
+  }
+
+  console.log = log(console.log)
+  console.error = log(console.error)
+
+  window.console = console
+
   function bind(fn, to) {
     var args = [].slice.call(arguments, 2)
     return function() {
@@ -44,7 +65,7 @@
 
   proto.push_update = function(url) {
     var self = this
-      , xhr = new XMLHttpRequest
+      , xhr = new XMLHttpRequest()
 
     ++self.pending_pushes
 
@@ -85,7 +106,7 @@
     }
 
     var results = __JSON__.stringify({suite:this.name, data:this.results})
-      , xhr = new XMLHttpRequest
+      , xhr = new XMLHttpRequest()
 
     xhr.onreadystatechange = bind(Function('next', 'xhr', 'if(xhr.readyState === 4) next()'), null, next, xhr)
     xhr.open('POST', this.urls.finish)
@@ -157,6 +178,7 @@
       this.emit('end')
     }
   }
+
   proto.respond = function(err) {
     if(err)
       this.emit('error', err)
@@ -188,10 +210,19 @@
       , name = 'test-module-'+(+new Date())
       , timeout
 
+
+    window.onerror = function() {
+      // errors at this point are probably syntax errors.
+
+      test_suite.push_update(test_suite.urls.error)
+      test_suite.finish()
+    }
+
     exports.test = bind(test, null, test_suite)
     define(name, fn)
 
     require([name], function() {
+
       test_suite.go()
     })
   }
@@ -203,8 +234,9 @@
   REPL.prototype.take = function(ident) {
     this.callenter = false
 
-    var xhr = new XMLHttpRequest
+    var xhr = new XMLHttpRequest()
     xhr.open('GET', '_repl/?ident='+encodeURIComponent(ident), false)
+    xhr.onreadystatechange = Function()
     xhr.send(null)
 
     switch(xhr.responseText) {
@@ -223,8 +255,9 @@
   }
 
   REPL.prototype.send = function(what) {
-    var xhr = new XMLHttpRequest
+    var xhr = new XMLHttpRequest()
 
+    xhr.onreadystatechange = Function()
     xhr.open('POST', '_repl/', false)
     try {
       xhr.send(__JSON__.stringify(what))
