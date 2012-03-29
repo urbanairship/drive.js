@@ -91,12 +91,28 @@
   }
 
   proto.add_result = function(test, type, err) {
-    if(err) err.stacktrace = ''+err.stack
-    this.results[test.name] = err || {'pass':true}
+    var out = {}
+
+    if(err) {
+      out.stacktrace = ''+err.stack
+      out.lineNumber = err.lineNumber || err.line
+      out.sourceURL = err.sourceURL
+      out.message = err.message
+      out.assertion = err.assertion
+    } else {
+      out = {pass:true}
+    }
+    this.results[test.name] = out
   }
 
   proto.respond_error = function(test, err_name, script, line) {
-    test.emit(/assert.js$/.test(script) ? 'fail' : 'error', {message: test.name + '\n' + err_name + '\n' + script + ':'+ line })
+    var is_assert = /assert.js$/.test(script)
+    test.emit(is_assert ? 'fail' : 'error', {
+        message: err_name
+      , sourceURL: script
+      , lineNumber: line
+      , assertion: is_assert 
+    })
     test.emit('end') 
   }
 

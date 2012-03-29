@@ -1,6 +1,8 @@
-function driver(url) {
-  var xhr = new XMLHttpRequest
+(function(exports) {
 
+var xhr = new XMLHttpRequest()
+
+function driver(url) {
   xhr.onreadystatechange = function() {
     if(xhr.readyState == 4) try { 
       xhr_continue(__JSON__.parse(xhr.responseText))
@@ -25,3 +27,7 @@ function xhr_continue(info) {
 }
 
 xhr_continue.timeout = null
+
+exports.xhr_continue = xhr_continue
+exports.driver = driver
+})(window)
