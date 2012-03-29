@@ -283,11 +283,12 @@
 
   var repl = new REPL
 
-  exports.__repl = function(ident, fn) {
+  exports.__repl = function(ident, fn, target, args) {
+    args = [].slice.call(args)
     if(repl.breakpoint) {
       while(1) {
         try {
-          var result = fn(function() { return repl.take(ident) })
+          var result = fn.apply(target, args.concat([function REPL() { return repl.take(ident) }]))
           repl.send(result)
         } catch(err) {
           if(err.step)
