@@ -1,6 +1,23 @@
 (function(exports) {
   var console = window.console || {}
-  
+
+  function profile_start() {
+    return
+
+    profile_start.id = console.profile && console.profile('prof')
+  }
+
+  function profile_end() {
+    return null
+
+    console.profileEnd && console.profileEnd('prof')
+    var profile = console.profiles && console.profiles[console.profiles.length-1]
+    if(profile) try {
+      return __JSON__.stringify(profile)
+    } catch(err) {}
+    return null
+  }
+
   function log(original) {
     return function() {
       var args = [].slice.call(arguments)
@@ -121,7 +138,12 @@
       return setTimeout(bind(this.finish, this), 10)
     }
 
-    var results = __JSON__.stringify({suite:this.name, data:this.results})
+    var results = __JSON__.stringify({
+            suite:this.name
+          , data:this.results
+          , coverage:this.coverage
+          , profile:profile_end()
+        })
       , xhr = new XMLHttpRequest()
 
     xhr.onreadystatechange = bind(Function('next', 'xhr', 'if(xhr.readyState === 4) next()'), null, next, xhr)
@@ -221,16 +243,23 @@
     suite.add(new (fn.length > 0 ? Test : SyncTest)(name, fn)) 
   }
 
+
   function suite(name, fn) {
     var test_suite = new TestSuite(name)
       , name = 'test-module-'+(+new Date())
       , timeout
 
+    __c__.attach(test_suite)
 
-    window.onerror = function() {
+    window.onerror = function(err_name, script, line) {
       // errors at this point are probably syntax errors.
-
+      console.log(err_name, script, line)
       test_suite.push_update(test_suite.urls.error)
+      test_suite.add_result({name:name}, 'error', {
+        message: err_name
+      , sourceURL: script
+      , line: line
+      })
       test_suite.finish()
     }
 
@@ -238,10 +267,40 @@
     define(name, fn)
 
     require([name], function() {
-
+      profile_start()
       test_suite.go()
     })
   }
+
+  // COVERAGE
+  // ----------------------------------------
+
+  function Coverage() {
+    this.covered = {}
+    this.mask = {}
+  }
+
+  var coverage_proto = Coverage.prototype
+
+  coverage_proto.attach = function(suite, asname) {
+    suite.coverage = {cover:this.covered, mask:this.mask}
+    window[asname] = this
+  }
+
+  coverage_proto.r = function(hash) {
+    this.covered[hash] = (this.covered[hash] || 0) + 1
+  }
+
+  coverage_proto.m = function(mask) {
+    for(var key in mask) if(mask.hasOwnProperty(key)) {
+      this.mask[key] = mask[key]
+    }
+  }
+
+  __c__ = new Coverage
+
+  // REPL
+  // ----------------------------------------
 
   function REPL() {
     this.breakpoint = false
