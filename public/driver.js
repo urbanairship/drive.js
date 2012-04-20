@@ -1,3 +1,5 @@
+// (c) 2012 Urban Airship and Contributors 
+
 (function(exports) {
 
 var xhr = new XMLHttpRequest()
