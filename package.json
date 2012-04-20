@@ -35,7 +35,7 @@
       "useragent": "1.0.5",
       "xmlhttprequest": "1.3.0"
     },
-    "license" : "NO",
+    "license" : "MIT",
     "author" : {
         "name" : "Chris Dickinson",
         "email" : "chris@neversaw.us",
