@@ -2,6 +2,8 @@
 
 Cross-browser unit testing for humans.
 
+For a quick run-through, see [this codestre.am recording](http://codestre.am/e09a137e84a11adcc3401535b).
+
 ## What is it?
 
 Drive is a unit testing framework and test driver. It can be used locally -- without any browsers involved --
