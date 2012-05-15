@@ -34,8 +34,10 @@
     }
   }
 
-  console.log = log(console.log)
-  console.error = log(console.error)
+  if(!console.__node__) {
+    console.log = log(console.log)
+    console.error = log(console.error)
+  }
 
   window.console = console
 
