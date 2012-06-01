@@ -15,7 +15,7 @@ function driver(url) {
       }, 1000) 
     }
   }
-  xhr.open('GET', url+"?user_agent=node")
+  xhr.open('POST', url+"?user_agent=node")
   xhr.send(null)
 }
 
@@ -32,4 +32,5 @@ xhr_continue.timeout = null
 
 exports.xhr_continue = xhr_continue
 exports.driver = driver
+
 })(window)

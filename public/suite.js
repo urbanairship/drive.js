@@ -90,7 +90,7 @@
 
     ++self.pending_pushes
 
-    xhr.open('GET', url)
+    xhr.open('POST', url)
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4) {
         --self.pending_pushes
