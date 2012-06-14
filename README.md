@@ -6,11 +6,15 @@ For a quick run-through, see [this codestre.am recording](http://codestre.am/e09
 
 ## Installation
 
-````bash
+* Download [node.js](http://nodejs.org/#download)
+* Open up a terminal.
+* Run the following command:
 
-npm uninstall drive.js -g
-
+````sh
+$ npm install -g drive.js
 ````
+
+You should be good to go!
 
 ## What is it?
 
