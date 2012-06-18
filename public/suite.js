@@ -120,6 +120,7 @@
       out.sourceURL = err.sourceURL
       out.message = err.message
       out.assertion = err.assertion
+      out.elapsed = err.elapsed
     } else {
       out = {pass:true}
     }
@@ -132,7 +133,7 @@
         message: err_name
       , sourceURL: script
       , lineNumber: line
-      , assertion: is_assert 
+      , assertion: is_assert
     })
     test.emit('end') 
   }
@@ -251,19 +252,23 @@
   function suite(name, fn) {
     var test_suite = new TestSuite(name)
       , name = 'test-module-'+(+new Date())
+      , now = +new Date()
       , timeout
 
     __c__.attach(test_suite)
 
     window.onerror = function(err_name, script, line) {
       // errors at this point are probably syntax errors.
-      console.log(err_name, script, line)
+
+      err_name.elapsed = +new Date() - now
+
       test_suite.push_update(test_suite.urls.error)
-      test_suite.add_result({name:name}, 'error', {
+      test_suite.add_result({name:name}, 'error', typeof err_name === 'string' ? {
         message: err_name
       , sourceURL: script
       , line: line
-      })
+      , elapsed: +new Date() - now
+      } : err_name)
       test_suite.finish()
     }
 
