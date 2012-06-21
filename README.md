@@ -4,6 +4,18 @@ Cross-browser unit testing for humans.
 
 For a quick run-through, see [this codestre.am recording](http://codestre.am/e09a137e84a11adcc3401535b).
 
+## Installation
+
+* Download [node.js](http://nodejs.org/#download)
+* Open up a terminal.
+* Run the following command:
+
+````sh
+$ npm install -g drive.js
+````
+
+You should be good to go!
+
 ## What is it?
 
 Drive is a unit testing framework and test driver. It can be used locally -- without any browsers involved --
