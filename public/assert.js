@@ -41,13 +41,13 @@
 
   exports.deepEqual = function(lhs, rhs, message) {
     if(!is_deep_equal(lhs, rhs)) {
-      throw make_error(message || ('lhs ("'+lhs+'") should deep equal rhs ("'+rhs+'") '))
+      throw make_error(message || ('lhs '+JSON.stringify(lhs)+' should deep equal rhs '+JSON.stringify(rhs)))
     }
   }
 
   exports.notDeepEqual = function(lhs, rhs, message) {
     if(is_deep_equal(lhs, rhs)) {
-      throw make_error(message || ('lhs ("'+lhs+'") should not deep equal rhs ("'+rhs+'") '))
+      throw make_error(message || ('lhs '+JSON.stringify(lhs)+' should not deep equal rhs '+JSON.stringify(rhs)))
     }
   }
 
