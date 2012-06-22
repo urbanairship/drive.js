@@ -1,0 +1,50 @@
+
+@keyframes borderbreath
+{
+0%   { border-top-color: #eef0ee; } 
+50%  { border-top-color: #99919b; }
+100% { border-top-color: #4d4352; }
+}
+
+@-moz-keyframes borderbreath 
+{
+0%   { border-top-color: #eef0ee; } 
+50%  { border-top-color: #99919b; }
+100% { border-top-color: #4d4352; }
+}
+
+@-webkit-keyframes borderbreath 
+{
+0%   { border-top-color: #eef0ee; } 
+50%  { border-top-color: #99919b; }
+100% { border-top-color: #4d4352; }
+}
+
+body { 
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+	font-weight: 300;
+
+	background: #eef0ee;
+	color: #545b55;
+	border-top: #99919b solid 10px;
+	margin: 0; padding: 0;
+
+	animation: borderbreath 5s linear infinite alternate;
+	-moz-animation: borderbreath 5s linear infinite alternate;
+	-webkit-animation: borderbreath 5s linear infinite alternate;
+}
+
+h1 {
+	background: #fff;
+	margin: 3em 22%;
+	padding: .8em 1em;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	font-weight: 300;
+}
+
+h1 small { 
+	display: block;
+	color: #b3bbb4;
+}
