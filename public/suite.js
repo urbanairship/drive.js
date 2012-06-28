@@ -174,6 +174,9 @@
     }
 
     function iter(last) {
+      // clear the redirects from the last run
+      suite.redirects({})
+
       if(last) {
         var tmp = +new Date
         self.results[last.name].elapsed = tmp - now
@@ -280,6 +283,8 @@
       test_suite.go()
     })
   }
+
+  suite.redirects = window.__redirect__
 
   // COVERAGE
   // ----------------------------------------
