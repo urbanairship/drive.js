@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/urbanairship/drive.js.png)](http://travis-ci.org/urbanairship/drive.js)
 # Drive.js
 
 Cross-browser unit testing for humans.
