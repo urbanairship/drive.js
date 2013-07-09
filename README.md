@@ -97,7 +97,7 @@ endpoints({
 
 ## drive file_or_directory [file_or_directory, ...]
 
-Where `file_or_directory` is the relative path to the file you want to test
+`file_or_directory` is the relative path to the file you want to test.
 
 Run the tests located at `file_or_directory` locally, in a JSDOM environment.
 
