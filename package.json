@@ -1,44 +1,44 @@
 {
-    "name" : "drive.js",
-    "description" : "js test driving with style",
-    "version" : "0.0.7",
-    "repository" : {
-        "type" : "git",
-        "url" : "git://github.com/urbanairship/drive.js.git"
-    },
-    "bin" : {
-        "drive" : "./bin/drive"
-    },
-    "main" : "./index.js",
-    "keywords" : [
-        "javascript",
-        "tdd",
-        "test",
-        "browser",
-        "test driver"
-    ],
-    "directories" : {
-        "lib" : "."
-    },
-    "engines" : {
-        "node" : ">=0.6.0"
-    },
-    "dependencies": {
-      "burrito": "0.X.X",
-      "tracejs": "0.X.X",
-      "dnode": "0.9.6",
-      "jsdom": "~0.7.0",
-      "nopt": "1.0.10",
-      "paperboy": "0.0.3",
-      "request": "2.9.153",
-      "simple-mime": "0.0.4",
-      "useragent": "1.0.5",
-      "xmlhttprequest": "1.3.0"
-    },
-    "license" : "MIT",
-    "author" : {
-        "name" : "Chris Dickinson",
-        "email" : "chris@neversaw.us",
-        "url" : "http://neversaw.us/"
-    }
+  "name": "drive.js",
+  "description": "js test driving with style",
+  "version": "0.0.8",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/urbanairship/drive.js.git"
+  },
+  "bin": {
+    "drive": "./bin/drive"
+  },
+  "main": "./index.js",
+  "keywords": [
+    "javascript",
+    "tdd",
+    "test",
+    "browser",
+    "test driver"
+  ],
+  "directories": {
+    "lib": "."
+  },
+  "engines": {
+    "node": ">=0.6.0"
+  },
+  "dependencies": {
+    "burrito": "0.X.X",
+    "tracejs": "0.X.X",
+    "dnode": "0.9.6",
+    "jsdom": "~0.7.0",
+    "nopt": "1.0.10",
+    "paperboy": "0.0.3",
+    "request": "2.9.153",
+    "simple-mime": "0.0.4",
+    "useragent": "1.0.5",
+    "xmlhttprequest": "1.3.0"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Chris Dickinson",
+    "email": "chris@neversaw.us",
+    "url": "http://neversaw.us/"
+  }
 }
