@@ -298,7 +298,9 @@
 
   coverage_proto.attach = function(suite, asname) {
     suite.coverage = {cover:this.covered, mask:this.mask}
-    window[asname] = this
+    if(asname) {
+      window[asname] = this
+    }
   }
 
   coverage_proto.r = function(hash) {
