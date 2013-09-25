@@ -153,7 +153,6 @@
     xhr.onreadystatechange = bind(Function('next', 'xhr', 'if(xhr.readyState === 4) next()'), null, next, xhr)
     xhr.open('POST', this.urls.finish)
     xhr.send(results)
-    console.log(results)
 
     function next() {
       // from driver.js
