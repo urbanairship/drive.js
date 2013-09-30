@@ -276,12 +276,21 @@
     }
 
     exports.test = bind(test, null, test_suite)
-    define(name, fn)
+    if (typeof exports.define == 'function') {
+      define(name, fn)
 
-    require([name], function() {
-      profile_start()
-      test_suite.go()
-    })
+      require([name], function() {
+        profile_start()
+        test_suite.go()
+      })
+    } else {
+      exports[name] = fn
+      document.addEventListener('DOMContentLoaded', function () {
+        fn()
+        profile_start()
+        test_suite.go()
+      })
+    }
   }
 
   suite.redirects = window.__redirect__
