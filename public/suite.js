@@ -150,7 +150,6 @@
           , profile:profile_end()
         })
       , xhr = new XMLHttpRequest()
-
     xhr.onreadystatechange = bind(Function('next', 'xhr', 'if(xhr.readyState === 4) next()'), null, next, xhr)
     xhr.open('POST', this.urls.finish)
     xhr.send(results)
@@ -276,7 +275,7 @@
     }
 
     exports.test = bind(test, null, test_suite)
-    if (typeof exports.define == 'function') {
+    if (exports.define) {
       define(name, fn)
 
       require([name], function() {
