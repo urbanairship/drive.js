@@ -275,7 +275,7 @@
     }
 
     exports.test = bind(test, null, test_suite)
-    if (exports.define) {
+    if(exports.define) {
       define(name, fn)
 
       require([name], function() {
@@ -284,7 +284,8 @@
       })
     } else {
       exports[name] = fn
-      document.addEventListener('DOMContentLoaded', function () {
+
+      document.addEventListener('DOMContentLoaded', function() {
         fn()
         profile_start()
         test_suite.go()
