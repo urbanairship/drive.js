@@ -285,11 +285,15 @@
     } else {
       exports[name] = fn
 
-      document.addEventListener('DOMContentLoaded', function() {
-        fn()
-        profile_start()
-        test_suite.go()
-      })
+      var ready_interval = setInterval(function () {
+        if (document.readyState === 'complete') {
+          clearInterval(ready_interval)
+          fn()
+          profile_start()
+          test_suite.go()
+        }
+      }, 100)
+
     }
   }
 
