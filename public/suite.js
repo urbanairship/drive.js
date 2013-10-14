@@ -285,10 +285,8 @@
         test_suite.go()
       })
     } else {
-      exports[name] = fn
-
-      var ready_interval = setInterval(function () {
-        if (document.readyState === 'complete') {
+      var ready_interval = setInterval(function() {
+        if(document.readyState === 'complete') {
           clearInterval(ready_interval)
           fn()
           profile_start()
