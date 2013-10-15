@@ -276,12 +276,25 @@
     }
 
     exports.test = bind(test, null, test_suite)
-    define(name, fn)
 
-    require([name], function() {
-      profile_start()
-      test_suite.go()
-    })
+    if(exports.define) {
+      define(name, fn)
+
+      require([name], function() {
+        profile_start()
+        test_suite.go()
+      })
+    } else {
+      var ready_interval = setInterval(function() {
+        if(document.readyState === 'complete') {
+          clearInterval(ready_interval)
+          fn()
+          profile_start()
+          test_suite.go()
+        }
+      }, 100)
+
+    }
   }
 
   suite.redirects = window.__redirect__
