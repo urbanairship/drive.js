@@ -2,6 +2,7 @@
 
 (function(exports) {
   var console = window.console || {}
+    , test_suite
 
   function profile_start() {
     return
@@ -84,7 +85,7 @@
     , finish:'_respond/'
   }
 
-  proto.push_update = function(url) {
+  proto.push_update = function(url, test) {
     var self = this
       , xhr = new XMLHttpRequest()
 
@@ -96,7 +97,8 @@
         --self.pending_pushes
       }
     }
-    xhr.send(null)
+    var to_send = __JSON__.stringify({ test: test, suite: test_suite })
+    xhr.send(to_send)
   }
 
   proto.add = function(test) {
@@ -106,7 +108,7 @@
     this.members[test.name] = test
 
     for(var ev in {'pass':'', 'fail':'', 'error':''}) {
-      test.on(ev, bind(this.push_update, this, this.urls[ev]))
+      test.on(ev, bind(this.push_update, this, this.urls[ev], test.name))
       test.on(ev, bind(this.add_result, this, test, ev))
     }
   }
@@ -251,12 +253,12 @@
     suite.add(new (fn.length > 0 ? Test : SyncTest)(name, fn)) 
   }
 
-
-  function suite(name, fn) {
-    var test_suite = new TestSuite(name)
-      , name = 'test-module-'+(+new Date())
+  function suite(suite_name, fn) {
+    var name = 'test-module-' + (+new Date())
       , now = +new Date()
       , timeout
+
+    test_suite = new TestSuite(suite_name)
 
     __c__.attach(test_suite)
 
@@ -265,7 +267,7 @@
 
       err_name.elapsed = +new Date() - now
 
-      test_suite.push_update(test_suite.urls.error)
+      test_suite.push_update(test_suite.urls.error, script + ':' + line)
       test_suite.add_result({name:name}, 'error', typeof err_name === 'string' ? {
         message: err_name
       , sourceURL: script
