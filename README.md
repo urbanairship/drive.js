@@ -139,6 +139,38 @@ Any statements not matched by the above commands will be evaluated in the same c
 
 The last item of `arguments` will be the `REPL` function -- **don't be alarmed**!
 
+## drive file_or_directory [...] --driver 8124 --browserify
+
+Will build a [browserify](https://github.com/substack/node-browserify) bundle
+of test dependencies and use it to provide requirements instead of the default
+require.js provider. Because this method does not use require.js, it is not
+necessary to accept `require` as an argument in your `suite` function. If your
+tests do have this, though, do not fret as it will be rewritten to remove it.
+
+Drive also supports passing options to browserify for customizing your test
+bundle output.
+
+* `drive [...] --browserify -- --transform <file>`: Apply `<file>` as a
+browserify transform to all dependencies. Note that all transforms are applied
+to test files as well. Alias `-t`.
+
+* `drive [...] --browserify -- --noparse <file>`: Skip browserify's parsing of
+`<file>`, useful for large libraries or other files that do not export or
+require anything.
+
+* `drive [...] --browserify -- --entry <file>`: Manually add `<file>` as an
+entry point in your browserify bundle. Alias `-e`.
+
+* `drive [...] --browserify -- --external <file>`: Consider `<file>` an
+external resource to `require` from. Alias `-x`.
+
+## drive file_or_directory [...] --driver 8124 --tap
+
+Test runs will output machine-friendly
+[TAP](http://testanything.org/wiki/index.php/Main_Page) instead of its default,
+more human-friendly output. This is useful for integrating Drive into
+automated testing/building systems.
+
 ## drive --spawn (host | port)
 
 Spawns a drive test server.
