@@ -97,7 +97,13 @@
         --self.pending_pushes
       }
     }
-    var to_send = __JSON__.stringify({ test: test, suite: test_suite })
+
+    var suite_info = {
+          name: test_suite.name
+        , members: test_suite.members
+      }
+      , to_send = __JSON__.stringify({ test: test, suite: suite_info })
+
     xhr.send(to_send)
   }
 
