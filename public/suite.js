@@ -3,6 +3,9 @@
 (function(exports) {
   var console = window.console || {}
     , test_suite
+    , failfast
+
+  failfast = window.location.hash && window.location.hash === '#failfast'
 
   function profile_start() {
     return
@@ -72,6 +75,7 @@
     this.results = {}
 
     this.pending_pushes = 0
+    this.failing = false
 
     EE.call(this)
   }
@@ -88,6 +92,14 @@
   proto.push_update = function(url, test) {
     var self = this
       , xhr = new XMLHttpRequest()
+
+    if(self.failing && failfast && url !== self.urls.finish) {
+      return this.finish()
+    }
+
+    if(failfast && (url === self.urls.fail || url === self.urls.error)) {
+      self.failing = true
+    }
 
     ++self.pending_pushes
 
@@ -114,12 +126,16 @@
     this.members[test.name] = test
 
     for(var ev in {'pass':'', 'fail':'', 'error':''}) {
-      test.on(ev, bind(this.push_update, this, this.urls[ev], test.name))
       test.on(ev, bind(this.add_result, this, test, ev))
+      test.on(ev, bind(this.push_update, this, this.urls[ev], test.name))
     }
   }
 
   proto.add_result = function(test, type, err) {
+    if(this.failing) {
+      return
+    }
+
     var out = {}
 
     if(err) {
@@ -273,13 +289,13 @@
 
       err_name.elapsed = +new Date() - now
 
-      test_suite.push_update(test_suite.urls.error, script + ':' + line)
       test_suite.add_result({name:name}, 'error', typeof err_name === 'string' ? {
         message: err_name
       , sourceURL: script
       , line: line
       , elapsed: +new Date() - now
       } : err_name)
+      test_suite.push_update(test_suite.urls.error, script + ':' + line)
       test_suite.finish()
     }
 
