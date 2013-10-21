@@ -4,6 +4,7 @@
   var console = window.console || {}
     , test_suite
     , config
+    , __c__
 
   function profile_start() {
     return
