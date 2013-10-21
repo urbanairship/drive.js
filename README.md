@@ -171,6 +171,10 @@ Test runs will output machine-friendly
 more human-friendly output. This is useful for integrating Drive into
 automated testing/building systems.
 
+## drive file_or_directory [...] --driver 8124 --failfast
+
+Test runs will be immediately ended upon any single failure.
+
 ## drive --spawn (host | port)
 
 Spawns a drive test server.
