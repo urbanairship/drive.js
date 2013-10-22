@@ -2,8 +2,6 @@
 
 Cross-browser unit testing for humans.
 
-For a quick run-through, see [this codestre.am recording](http://codestre.am/e09a137e84a11adcc3401535b).
-
 ## Installation
 
 * Download [node.js](http://nodejs.org/#download)
@@ -139,7 +137,7 @@ Any statements not matched by the above commands will be evaluated in the same c
 
 The last item of `arguments` will be the `REPL` function -- **don't be alarmed**!
 
-## drive file_or_directory [...] --driver 8124 --browserify
+## drive file_or_directory [...] --browserify
 
 Will build a [browserify](https://github.com/substack/node-browserify) bundle
 of test dependencies and use it to provide requirements instead of the default
@@ -164,16 +162,16 @@ entry point in your browserify bundle. Alias `-e`.
 * `drive [...] --browserify -- --external <file>`: Consider `<file>` an
 external resource to `require` from. Alias `-x`.
 
-## drive file_or_directory [...] --driver 8124 --tap
+## drive file_or_directory [...] --tap
 
 Test runs will output machine-friendly
 [TAP](http://testanything.org/wiki/index.php/Main_Page) instead of its default,
 more human-friendly output. This is useful for integrating Drive into
 automated testing/building systems.
 
-## drive file_or_directory [...] --driver 8124 --failfast
+## drive file_or_directory [...] --failfast
 
-Test runs will be immediately ended upon any single failure.
+Test runs will be immediately ended upon any single failure. Alias `-x`
 
 ## drive --spawn (host | port)
 
