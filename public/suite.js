@@ -4,7 +4,6 @@
   var console = window.console || {}
     , test_suite
     , config
-    , __c__
 
   function profile_start() {
     return
@@ -94,7 +93,7 @@
       , xhr = new XMLHttpRequest()
 
     if(self.failing && config.failfast && is_failing) {
-      return this.finish()
+      return self.finish()
     }
 
     if(config.failfast && is_failing) {
