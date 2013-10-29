@@ -104,12 +104,6 @@ that directory and its sub-directories.
 
 **No drive server is required in this mode.**
 
-## drive file_or_directory [...] --port number
-
-Run local driver on port `number`, default is 9000.
-
-**This is only applicable in local driver mode.**
-
 ## drive file_or_directory [...] --driver=(host | port)
 
 Runs the tests listed in all environments available to the Drive server located at `host` or `port`.
