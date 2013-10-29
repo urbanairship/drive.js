@@ -37,7 +37,8 @@
     "browserify": "~2.34.0",
     "falafel": "~0.3.1",
     "cssauron-falafel": "0.0.3",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "getport": "~0.1.0"
   },
   "license": "MIT",
   "author": {
