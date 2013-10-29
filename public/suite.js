@@ -91,11 +91,11 @@
       , is_failing = url === self.urls.fail || url === self.urls.error
       , xhr = new XMLHttpRequest()
 
-    if(self.failing && config.failfast && is_failing) {
+    if(self.failing && __config__.failfast && is_failing) {
       return self.finish()
     }
 
-    if(config.failfast && is_failing) {
+    if(__config__.failfast && is_failing) {
       self.failing = true
     }
 
@@ -307,7 +307,7 @@
     }, 100)
 
     function start_suite() {
-      if(!config.browserify) {
+      if(!__config__.browserify) {
         define(name, fn)
 
         require([name], function() {
