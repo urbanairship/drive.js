@@ -3,7 +3,6 @@
 (function(exports) {
   var console = window.console || {}
     , test_suite
-    , config
 
   function profile_start() {
     return
@@ -92,11 +91,11 @@
       , is_failing = url === self.urls.fail || url === self.urls.error
       , xhr = new XMLHttpRequest()
 
-    if(self.failing && config.failfast && is_failing) {
+    if(self.failing && __config__.failfast && is_failing) {
       return self.finish()
     }
 
-    if(config.failfast && is_failing) {
+    if(__config__.failfast && is_failing) {
       self.failing = true
     }
 
@@ -303,25 +302,12 @@
     var ready_interval = setInterval(function() {
       if(document.readyState === 'complete') {
         clearInterval(ready_interval)
-        get_config(start_suite)
+        start_suite()
       }
     }, 100)
 
-    function get_config(ready) {
-      var xhr = new XMLHttpRequest()
-
-      xhr.open('GET', '_config/')
-      xhr.onreadystatechange = function() {
-        if(xhr.readyState === 4) {
-          config = __JSON__.parse(xhr.responseText)
-          ready()
-        }
-      }
-      xhr.send(null)
-    }
-
     function start_suite() {
-      if(!config.browserify) {
+      if(!__config__.browserify) {
         define(name, fn)
 
         require([name], function() {
