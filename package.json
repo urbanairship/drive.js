@@ -1,7 +1,7 @@
 {
   "name": "drive.js",
   "description": "js test driving with style",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "repository": {
     "type": "git",
     "url": "git://github.com/urbanairship/drive.js.git"
