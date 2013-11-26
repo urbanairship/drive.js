@@ -22,7 +22,7 @@ function driver(url) {
 function xhr_continue(info) {
   if(info.adverb === 'GET') {
     xhr_continue.timeout && clearTimeout(xhr_continue.timeout)
-    window.location.replace(info.action)
+    window.location.href = info.action
   } else {
     xhr_continue.timeout = setTimeout(function() { driver(info.action) }, 200)
   }
