@@ -37,7 +37,7 @@
     "browserify": "2.34.3",
     "falafel": "0.3.1",
     "cssauron-falafel": "0.0.3",
-    "getport": "~0.1.0",
+    "getport": "0.1.0",
     "cssstyle": "0.2.3",
     "cssom": "0.2.5",
     "through": "2.3.4"
