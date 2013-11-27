@@ -24,21 +24,23 @@
     "node": ">=0.6.0"
   },
   "dependencies": {
-    "burrito": "0.X.X",
-    "tracejs": "0.X.X",
+    "burrito": "0.2.12",
+    "tracejs": "0.1.8",
     "dnode": "0.9.6",
-    "jsdom": "~0.7.0",
+    "jsdom": "0.8.8",
     "nopt": "1.0.10",
     "paperboy": "0.0.3",
     "request": "2.9.153",
     "simple-mime": "0.0.4",
     "useragent": "1.0.5",
     "xmlhttprequest": "1.3.0",
-    "browserify": "~2.34.0",
-    "falafel": "~0.3.1",
+    "browserify": "2.34.3",
+    "falafel": "0.3.1",
     "cssauron-falafel": "0.0.3",
-    "through": "~2.3.4",
-    "getport": "~0.1.0"
+    "getport": "~0.1.0",
+    "cssstyle": "0.2.3",
+    "cssom": "0.2.5",
+    "through": "2.3.4"
   },
   "license": "MIT",
   "author": {
