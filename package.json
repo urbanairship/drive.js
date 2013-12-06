@@ -27,7 +27,7 @@
     "burrito": "0.X.X",
     "tracejs": "0.X.X",
     "dnode": "0.9.6",
-    "jsdom": "~0.7.0",
+    "jsdom": "0.8.9",
     "nopt": "1.0.10",
     "paperboy": "0.0.3",
     "request": "2.9.153",
