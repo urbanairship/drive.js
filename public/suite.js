@@ -1,4 +1,4 @@
-// (c) 2012 Urban Airship and Contributors 
+// (c) 2012 Urban Airship and Contributors
 
 (function(exports) {
   var console = window.console || {}
@@ -42,11 +42,13 @@
 
   window.console = console
 
+  console.log(window.location.toString())
+
   function bind(fn, to) {
     var args = [].slice.call(arguments, 2)
     return function() {
       return fn.apply(to, args.concat([].slice.call(arguments)))
-    } 
+    }
   }
 
   function EE() {
@@ -157,7 +159,7 @@
       , lineNumber: line
       , assertion: is_assert
     })
-    test.emit('end') 
+    test.emit('end')
   }
 
   proto.finish = function() {
@@ -217,14 +219,14 @@
 
       self.timeout = setTimeout(function() {
         test.emit('error', new Error('test timed out'))
-        test.emit('end') 
-      }, 30 * 1000) 
+        test.emit('end')
+      }, 30 * 1000)
 
       // non-reentrant.
       var i = 0
       test.on('end', function() { if(++i < 2) setTimeout(function() { iter(test) }, 0) })
       test.go()
-    } 
+    }
 
     iter()
   }
@@ -262,7 +264,7 @@
 
   SyncTest.prototype = new Test
   SyncTest.prototype.respond = function() {
-    // do nothing. 
+    // do nothing.
   }
 
   SyncTest.prototype.go = function() {
@@ -270,7 +272,7 @@
   }
 
   function test(suite, name, fn) {
-    suite.add(new (fn.length > 0 ? Test : SyncTest)(name, fn)) 
+    suite.add(new (fn.length > 0 ? Test : SyncTest)(name, fn))
   }
 
   function suite(suite_name, fn) {
@@ -410,7 +412,7 @@
         }
       }
     }
-  } 
+  }
 
   exports.__repl.set_trace = function() {
     repl.breakpoint = true
@@ -418,7 +420,7 @@
   }
 
   exports.__repl.callenter = function() {
-    repl._cached = repl._cached ? repl._cached.concat([repl.breakpoint]) : [repl.breakpoint] 
+    repl._cached = repl._cached ? repl._cached.concat([repl.breakpoint]) : [repl.breakpoint]
     repl.breakpoint = repl.callenter
   }
 

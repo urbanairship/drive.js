@@ -1,22 +1,31 @@
-# Terminology
+# What is this file:
 
-### From drive
+I didn't write drive.js, but I need to use it, and occasionally fix it. It's
+handling a complicated enough case that jumping in cold is difficult-- it is
+hard to the source in the order in which it is executed. 
+
+## Terminology
+
+There is some drive specific terminology:
+
 - environment: where the test is run, e.g. jsdom, firefox, IE, etc.
 - driver: a server which communicates with the code running in the environment
 - suite: a collection of unit tests
 - client:
 - run:
 
-### Document Specific
+... and some that is useful to have when considering it:
 
 - tester: the test author
 - target: the code whose behavior the test is designed to verify
 
-# drive's flow control
+# Flow Control
+
+When you call `drive my/dir/of/tests/` execution does the following:
 
 1. bin/drive
 2. (new require('lib/cli')).exec()
-3. Forks on options, go to one of REPL, SPAWN, DRIVER or LOCAL
+3. Forks on options, go to one of REPL, SPAWN, DRIVER or LOCAL 
 
 # LOCAL
 
@@ -27,34 +36,113 @@ results.
 1. call CLI.prototype.local()
 2. Instantiate a new driver with the command line args
 3. Get a port, and set a `(new require(lib/driver)).server()` to listen on it.
-5. call `(new require('lib/node_env')(localhost:$PORT)).connect()`
-6. listen for lib/driver to emit an 'environment event'
-7. on environment, CLI instantiates a new `require(lib/client).LocalClient`
-   instance, immediately passes it to `new require('lib/Request')`, along with
-   the results of ``CLI.prototype.get_tests()``. The resulting Request instance
-   is then passed to ``driver.request_test_run``
+4. call `(new require('lib/node_env')(localhost:$PORT)).connect()`
+5. set up a listener listen for lib/driver to emit an 'environment event'
 
-# `driver = new require(lib/driver); driver.server()`
+  When called, the listener instantiates a new
+  `require(lib/client).LocalClient` instance, immediately passes it to `new
+  require('lib/Request')`, along with the results of
+  ``CLI.prototype.get_tests()``. The resulting Request instance is then
+  passed to ``driver.request_test_run``
+6. Finally, drive appears to have an "adaptor" system which operates by
+`require` node files at a specified path, and called the exported function with
+the `driver` instance instantiated in 2.
+
+Steps 3., 4., and 5. schedule tasks for future execution.
+
+### 3. `driver = new require(lib/driver); driver.server()`
  
-1. Creates an http server and binds a request handler. The request handler
-   parses incoming urls, and routes them against an driver.prototype.routes. 
-2. Matching: URL pathnames are matched against javascript regular expressions.
-   Each regex is associated with a key on the driver prototype, which is then
-   called with the following arguments:
+Creates an http server and binds a request handler. The request handler
+parses incoming urls, and routes them against driver.prototype.routes. 
 
-   - req: a node [incomingMessage](http://nodejs.org/api/http.html#http_http_incomingmessage)
-   - resp: a node [serverResponse](http://nodejs.org/api/http.html#http_class_http_serverresponse)
-   - the parenthesized substring matches against the RegExp, as described [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec)
+The request handler matches URL pathnames  against javascript regular expressions.
+Each regex is associated with a key on the driver prototype, which is then
+called with the following arguments:
 
-  The routes are matched in order, stopping at the first match. The regexen in
-  question are defined [here](https://github.com/urbanairship/drive.js/blob/master/lib/driver.js#L215-L230)
+- req: a node [incomingMessage](http://nodejs.org/api/http.html#http_http_incomingmessage)
+- resp: a node [serverResponse](http://nodejs.org/api/http.html#http_class_http_serverresponse)
+- the parenthesized substring matches against the RegExp, as described [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec)
 
-# `driver.env_suite_endpoint`
+The routes are matched in order, stopping at the first match. The regexen in
+question are defined [here](https://github.com/urbanairship/drive.js/blob/master/lib/driver.js#L215-L230)
+
+### 4. `new require(lib/node_env)(hostname).connect()`
+
+1. This sets up a subprocess via `child_process.fork('lib/node_subprocess')`
+2. Sets up message passing via `process.send` and `process.on('message', handler)`
+3. When this process gets a `message`, it:
+  1. makes an http GET against message.url
+  2. When the response comes back, set body of the DOM to the request body.
+     (although because of the way jsdom's api works, this could also be a url
+     of a website anywhere on the internet. It's up to the server to supply
+     it.)
+  3. This html contains script tags which cause the bundle to be loaded and
+     the test to be run.
+
+The html includes the following script tags:
+
+```html
+<script type="text/javascript" src="/media/3p/json3.min.js"></script>
+<script type="text/javascript" src="/media/driver.js"></script>
+<script type="text/javascript">
+  driver('/register/')
+</script>
+```
+
+They ultimately an endpoint which passes requests on to a static file server.
+The drive endpoint also includes without comment 
+
+```javacript
+req.url = 'http://derp.com/' + endpoint
+```
+
+where `req` is the node's native `incomingRequest` object. 
+
+#### /media/driver.js
+
+This module is fairly simple, -- given a url, it constructs an xhr a
+
+
+
+
+### 5. `driver.on('environment', got_env)`
+
+The 'environemnt' even tis emitted when a client hits a url matching: 
+
+```javascript
+[/^\/register\/$/,                                    'xhr_register']
+```
+
+It is emitted with the originating environemnt, but this information is ignored
+for the local case.
   
-Due to time constraints, and the general well functioning state of most of
-drive's http communication, this discussion elides all routes but the last
-one, which is responsible for routing to tester-defined endpoints. The route
-is:
+1. `cli.prototype.get_tests()`: if non-option command line arguments remain,
+  it constructs a list of files from them (by resolving dirs to their
+  contents), checks each file for syntax errors (a little poorly), and returns
+  the constructed list. If no arguments remain, it does the same as if you had
+  specified the current working directory.
+
+  It does not use a recursive traversal algorithm, which means it can only run
+  tests a finite depth from the specified entry points. In this case, two
+  directories deep.
+
+2. `(new Driver).request_test_run(new Request({}, new Client(new CLI, ...)),...)`
+
+  This function checks the return value of
+  `Request.prototype.accepted_by(driver_instance)`.  If this method returns true,
+  then the request instance is added to an internal queue, represented by an
+  array.
+
+  When the request is instantiates, it accepts a possible empty array of
+  environments in which to run the test. Request.prototype.accepted_by ensures
+  that Request and the Driver that the current environment is an appropriate
+  one.
+
+## Routes
+
+#### `driver.env_suite_endpoint`
+  
+The route is:
 
 ```javascript
 [/^\/([\d\w\-]+)\/([\d\w\-]+)\/(.*)/, 'env_suite_endpoint']
@@ -79,17 +167,7 @@ need to identify the suite that issued it, so it can find the matching
 endpoints. However relying on the url to do so means that drive cannot support
 absolute url paths at all, even when it can match them. 
 
-# `new require(lib/node_env)(hostname).connect()`
-  1. this sets up a subprocess via `child_process.fork('lib/node_subprocess')`
-  2. sets up message passing via `process.send` and `process.on('message', handler)`
-  3. when this process gets a `message`, it:
-    1. makes an http GET against message.url
-    2. When the response comes back, set body of the DOM to the request body.
-       (although because of the way jsdom's api works, this could also be a url
-       of a website anywhere on the internet. It's up to the server to supply
-       it.)
-    3. This html contains script tags which cause the bundle to be loaded and
-       the test to be run.
+
 
 
 # DRIVER
