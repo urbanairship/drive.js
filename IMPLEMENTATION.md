@@ -11,8 +11,9 @@ There is some drive specific terminology:
 - environment: where the test is run, e.g. jsdom, firefox, IE, etc.
 - driver: a server which communicates with the code running in the environment
 - suite: a collection of unit tests
-- client:
-- run:
+- client: 
+- run: The unit of work into which tests are divided.
+- Request: an object used to track a test run
 
 ... and some that is useful to have when considering it:
 
@@ -89,29 +90,45 @@ The html includes the following script tags:
 </script>
 ```
 
-They ultimately an endpoint which passes requests on to a static file server.
-The drive endpoint also includes without comment 
+They `/media/*` routes to an endpoint which passes requests on to a static file
+server.
 
-```javacript
-req.url = 'http://derp.com/' + endpoint
-```
+On load, the client requests instructions from the server. Of these there are
+two: 
 
-where `req` is the node's native `incomingRequest` object. 
+1. change the current window.location 
+2. request instructions from a different URL.
 
-#### /media/driver.js
+It accomplishes this via functions that `/media/driver.js` (found in
+`/public/driver.js` module) attaches to the window objection: `driver` and
+`xhr_continue`. The last script tag calls `driver`  to start execution
 
-This module is fairly simple, -- given a url, it constructs an xhr a
+These functions do the following:
 
+1. `driver`: given a URL, it constructs an XHR to which it posts an empty body.
+  The URL is assumed to have no query parameters. On response, it attempts to
+  JSON parse the response. On success it calls `xhr_continue` with the parsed
+  response. On failure, it calls itself with the url `'/regiseter/'`.
 
+2. `xhr_continue`: a function that expects an object, called `info`. It checks
+   if `info.adverb === 'GET'` it changes the window location to `info.action`
 
+   Otherwise, it calls `driver` with  `info.action`
+
+#### `[/^\/register\/$/, 'xhr_register']`
+
+This view is the first one hit when a new client finishes loading, or when it
+runs out of tasks. It determines the requesting environment from the User Agent
+header, adds it to the set of allowed environments, and assigns the client a
+unique identifier. It creates a new `require('lib/environemtn')` object to
+represent the newly created environment, and adds it to a list.
+
+It sends back instructions telling the client to change its
+location to '/$UUID/', and now we are off to th races. 
+
+It also emits the 'environment' event after it responds to the request. 
 
 ### 5. `driver.on('environment', got_env)`
-
-The 'environemnt' even tis emitted when a client hits a url matching: 
-
-```javascript
-[/^\/register\/$/,                                    'xhr_register']
-```
 
 It is emitted with the originating environemnt, but this information is ignored
 for the local case.
@@ -137,6 +154,42 @@ for the local case.
   environments in which to run the test. Request.prototype.accepted_by ensures
   that Request and the Driver that the current environment is an appropriate
   one.
+
+#### `[/^\/([\d\w\-]+)\/$/, 'env']`
+
+This endpoint returns html: which calls `driver('./_idle')`, on the client.
+Note that the relative URL preserves the environment identifier.
+
+#### `[/^\/([\d\w\-]+)\/_idle\/$/, 'xhr_idle']`
+
+
+Does the following:
+
+
+1. Match the environment UUID (the matched group) to an environment the driver
+   knows about. 
+
+2. If there are requests for tests pending (there is a list of
+   `require(lib/request)` objects which represent pending test requests), it
+   calls `Request.prototype.create_run` with the next pending request, and the
+   current environemnt, and the number of environments it needs to match.
+
+3. `Request.prototype.create_run`: This method updates queues which Request
+   maintains for each environment, and creates a new require('lib/run') object.
+   The run is assigned a unique identifier.
+
+4. The test request stays in the drivers `test_request` queue until it has been
+   fulfilled, meaning it no longer has test requests queued for any
+   environment.
+
+5. Finally it creates a browserify bundle (if necessary), and instructs the
+   client to go to `/$ENV_UUID/$RUN_UUID`.
+
+It has two error conditions, if the environment or its specifier are bad,  then
+it redirects the client `/register/`. Otherwise failures result in asking the
+client to hit the current route again.
+
+#### `[/^\/([\d\w\-]+)\/([\d\w\-]+)\/$/, 'env_suite']`
 
 ## Routes
 
@@ -166,9 +219,6 @@ method on it to determine the currently running test suite. The request does
 need to identify the suite that issued it, so it can find the matching
 endpoints. However relying on the url to do so means that drive cannot support
 absolute url paths at all, even when it can match them. 
-
-
-
 
 # DRIVER
 
