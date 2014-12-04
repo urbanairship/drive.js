@@ -1,6 +1,6 @@
-# Drive.js
+# Drive.js: DEPRECATED
 
-Cross-browser unit testing for humans.
+Cross-browser unit testing for masochists.
 
 ## Installation
 
@@ -23,9 +23,9 @@ The goal of Drive is to reduce context-switching from your terminal -- ideally, 
 of your target environments without ever leaving your terminal. This means that it attempts to provide (at minimum)
 a decent set of debugging tools across all environments:
 
-* **Humane stack traces**: reformats stack traces (as much as possible) to give context around the exceptions, using
+* ~~**Humane stack traces**: reformats stack traces (as much as possible) to give context around the exceptions, using
 tracejs. Some environments support a bit less debugging info than V8, and in those cases Drive will do its level
-best to at least show you where the error originated from.
+best to at least show you where the error originated from.~~
 
 * **console.log piping**: Drive will pipe the output from `console.error` and `console.log` directly to your terminal,
 annotated with the environment from which they originated. This means that if you need (for whatever reason) to inspect 
