@@ -1,6 +1,6 @@
-# Drive.js
+# Drive.js: DEPRECATED
 
-Cross-browser unit testing for humans.
+**Deprecation Notice:** Drive is no longer maintained
 
 ## Installation
 
